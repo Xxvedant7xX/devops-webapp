@@ -13,11 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Print message
+      - name: Build Step
         run: echo "Build Successful!"
-        
-      - name: Notify Slack
+
+      - name: Slack Success Notification
+        if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' \
           --data '{"text":"✅ CI Pipeline Successful for DevOps WebApp"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Slack Failure Notification
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"❌ CI Pipeline Failed for DevOps WebApp"}' \
           ${{ secrets.SLACK_WEBHOOK_URL }}
